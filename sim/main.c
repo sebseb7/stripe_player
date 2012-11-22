@@ -11,7 +11,6 @@
 
 
 
-#define FRAMETIME 29
 
 int sdlpause = 0;
 
@@ -26,7 +25,7 @@ struct animation {
 	tick_fun tick_fp;
 	deinit_fun deinit_fp;
 	int duration;
-	int min_delay;
+	uint32_t timing;
 } animations[MAX_ANIMATIONS];
 
 
@@ -75,7 +74,7 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 	animations[animationcount].tick_fp = tick;
 	animations[animationcount].deinit_fp = deinit;
 	animations[animationcount].duration = count;
-	animations[animationcount].min_delay = t;
+	animations[animationcount].timing = 1000/t;
 
 	animationcount++;
 
@@ -172,11 +171,11 @@ int main(int argc __attribute__((__unused__)), char *argv[] __attribute__((__unu
 		SDL_Flip(screen);
 
 
-		Uint32 now = SDL_GetTicks(); 
+		Uint32 now = SDL_GetTicks() - lastFrame; 
 
-		if( (now - lastFrame) < FRAMETIME )
+		if( now < animations[current_animation].timing )
 		{
-			SDL_Delay(FRAMETIME - (now - lastFrame));
+			SDL_Delay(animations[current_animation].timing - now);
 		}
 		lastFrame = SDL_GetTicks();
 

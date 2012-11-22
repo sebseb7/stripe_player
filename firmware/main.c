@@ -17,6 +17,12 @@ void Delay(__IO uint32_t nTime)
 
 	while(TimingDelay != 0);
 }
+static void Delay100us(__IO uint32_t nTime)
+{
+	TimingDelay = nTime;
+
+	while(TimingDelay != 0);
+}
 
 void TimingDelay_Decrement(void)
 {
@@ -68,7 +74,7 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 	animations[animationcount].tick_fp = tick;
 	animations[animationcount].deinit_fp = deinit;
 	animations[animationcount].duration = count;
-	animations[animationcount].timing = t;
+	animations[animationcount].timing = 10000 / t;
 
 	animationcount++;
 }
@@ -178,7 +184,7 @@ int main(void)
 				loopcount = 0;
 		}
 		
-
+		uint32_t start_tick = tick;
 
 		animations[current_animation].tick_fp();
 
@@ -194,8 +200,10 @@ int main(void)
 		GPIOB->ODR           &=       ~(1<<12);
 #endif
 
-		if(animations[current_animation].timing != 0)
-			Delay(animations[current_animation].timing);
+		uint32_t duration = tick - start_tick;
+
+		if(animations[current_animation].timing - duration > 0)
+			Delay100us(animations[current_animation].timing - duration);
 
 		tick_count++;
 

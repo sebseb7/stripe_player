@@ -38,7 +38,7 @@ static void deinit(void)
 
 static void constructor(void) CONSTRUCTOR_ATTRIBUTES
 void constructor(void) {
-	registerAnimation(init,tick,deinit, 6, 6000);
+	registerAnimation(init,tick,deinit, 140, 4000);
 }
 
 
