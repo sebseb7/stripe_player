@@ -97,8 +97,8 @@ void lcdFlush(void)
 	spi_send(0);
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
-		spi_send (0x80 | (leds[x][0] >> 1) );
 		spi_send (0x80 | (leds[x][1] >> 1) );
+		spi_send (0x80 | (leds[x][0] >> 1) );
 		spi_send (0x80 | (leds[x][2] >> 1) );
 	}
 	spi_send(0);
@@ -194,7 +194,7 @@ int main(void)
 		GPIOB->ODR           &=       ~(1<<12);
 #endif
 
-		Delay(20);
+		Delay(29);
 		tick_count++;
 
 
