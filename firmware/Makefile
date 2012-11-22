@@ -16,6 +16,7 @@ endif
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
+	../animations/switch_rgb.c \
 	../animations/plasma.c \
 	../animations/plasma2.c \
 	libs/math.c \
