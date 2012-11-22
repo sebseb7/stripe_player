@@ -194,7 +194,9 @@ int main(void)
 		GPIOB->ODR           &=       ~(1<<12);
 #endif
 
-		Delay(29);
+		if(animations[current_animation].timing != 0)
+			Delay(animations[current_animation].timing);
+
 		tick_count++;
 
 
