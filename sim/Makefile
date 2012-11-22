@@ -38,11 +38,11 @@ clean:
 	rm -f ${BINARIES} _all_animations
 
 %$(BINEXT): ../animations/%.c $(LIB_SOURCES) $(LIB_HEADERS) main.c main.h Makefile 
-	@echo "  \033[1;34mCompile\033[0m $< -> \033[1;33m $@\033[0m "
+	@echo -e "  \033[1;34mCompile\033[0m $< -> \033[1;33m $@\033[0m "
 	@$(COMPILER) $(FLAGS) main.c $(LIB_SOURCES) $(LDFLAGS) $< -o $@ -I. 
 
 _all_animations: $(SOURCES) $(LIB_SOURCES) $(LIB_HEADERS) main.c main.h Makefile 
-	@echo "  \033[1;34mCompile all animations \033[0m -> \033[1;33m _all_animations \033[0m"
+	@echo -e "  \033[1;34mCompile all animations \033[0m -> \033[1;33m _all_animations \033[0m"
 	@$(COMPILER) -DFULL=1 $(FLAGS) $(LIB_SOURCES) $(SOURCES) $(LDFLAGS) main.c -o _all_animations -I. 
 
 .PHONY : clean all 
