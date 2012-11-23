@@ -29,8 +29,8 @@
 #define SPIx_SD_MOSI_AF                 GPIO_AF_SPI2
 
 
-#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_8
-#define SPIx_SD_BAUDRATE_FAST  			SPI_BaudRatePrescaler_8
+#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_2
+//#define SPIx_SD_BAUDRATE_FAST  			SPI_BaudRatePrescaler_8
 
 
 /*#define SPI_SD                   SPI2
@@ -51,7 +51,7 @@ A
 */
 
 /* - for SPI1 and full-speed APB2: 72MHz/4 */
-#define SPI_BaudRatePrescaler_SPI_SD  SPI_BaudRatePrescaler_8
+//#define SPI_BaudRatePrescaler_SPI_SD  SPI_BaudRatePrescaler_4
 
 void spi_send( uint8_t out )
 {
