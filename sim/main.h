@@ -6,7 +6,8 @@
 enum {
 	LED_WIDTH = 32*5,
 	ZOOM_X = 5,
-	ZOOM_Y = 15
+	ZOOM_Y = 15,
+	FIRST_ON = 22
 };
 
 #define STRIPE
