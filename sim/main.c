@@ -26,6 +26,7 @@ struct animation {
 	deinit_fun deinit_fp;
 	int duration;
 	uint32_t timing;
+	uint32_t idle;
 } animations[MAX_ANIMATIONS];
 
 
@@ -66,7 +67,7 @@ void getLedX(uint8_t x, uint8_t* red, uint8_t* green, uint8_t* blue) {
 	*blue = leds[x][2];
 }
 
-void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t, uint16_t count)
+void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t, uint16_t count, uint8_t idle)
 {
 	if(animationcount == MAX_ANIMATIONS)
 		return;
@@ -74,6 +75,7 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 	animations[animationcount].tick_fp = tick;
 	animations[animationcount].deinit_fp = deinit;
 	animations[animationcount].duration = count;
+	animations[animationcount].idle = idle;
 	animations[animationcount].timing = 1000/t;
 
 	animationcount++;

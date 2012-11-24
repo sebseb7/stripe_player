@@ -29,8 +29,8 @@ endif
 SOURCES=$(wildcard ../animations/*.c)
 BINARIES=$(SOURCES:../animations/%.c=%$(BINEXT))
 
-LIB_SOURCES=$(wildcard ../firmware/libs/math.c)
-LIB_HEADERS=$(wildcard ../firmware/libs/math.h)
+LIB_SOURCES=$(wildcard ../firmware/libs/math.c ../firmware/libs/hsv2rgb.c)
+LIB_HEADERS=$(wildcard ../firmware/libs/math.h ../firmware/libs/hsv2rgb.h)
 
 all: $(BINARIES) _all_animations
 

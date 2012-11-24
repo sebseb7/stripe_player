@@ -9,7 +9,11 @@
  *
  */
 
-static uint8_t color_correction[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,16,16,16,17,17,17,18,18,18,19,19,20,20,20,21,21,22,22,23,23,23,24,24,25,25,26,26,27,27,28,29,29,30,30,31,32,32,33,33,34,35,35,36,37,38,38,39,40,41,41,42,43,44,45,46,47,48,48,49,50,51,52,53,54,56,57,58,59,60,61,62,64,65,66,67,69,70,71,73,74,76,77,79,80,82,83,85,87,88,90,92,93,95,97,99,101,103,105,107,109,111,113,115,118,120,122,125,127};
+static const uint8_t color_correction[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,16,16,16,17,17,17,18,18,18,19,19,20,20,20,21,21,22,22,23,23,23,24,24,25,25,26,26,27,27,28,29,29,30,30,31,32,32,33,33,34,35,35,36,37,38,38,39,40,41,41,42,43,44,45,46,47,48,48,49,50,51,52,53,54,56,57,58,59,60,61,62,64,65,66,67,69,70,71,73,74,76,77,79,80,82,83,85,87,88,90,92,93,95,97,99,101,103,105,107,109,111,113,115,118,120,122,125,127};
+
+static uint16_t key_state;
+static uint16_t key_press;
+uint32_t buttonsInitialized = 0;
 
 static __IO uint32_t TimingDelay;
 static __IO uint32_t tick;
@@ -28,15 +32,40 @@ static void Delay100us(__IO uint32_t nTime)
 
 void TimingDelay_Decrement(void)
 {
+	static uint16_t ct0, ct1;
+	uint16_t i;
 	if (TimingDelay != 0x00)
 	{ 
 		TimingDelay--;
+	}
+	if(buttonsInitialized)
+	{
+		uint16_t key_curr = ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)<<1)|
+							  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7));
+
+		i = key_state ^ ~key_curr;
+		ct0 = ~( ct0 & i );
+		ct1 = ct0 ^ (ct1 & i);
+		i &= ct0 & ct1;
+		key_state ^= i;
+		key_press |= key_state & i;
 	}
 	tick++;
 }
 uint32_t getSysTick(void)
 {
 	return tick;
+}
+uint16_t get_key_press( uint16_t key_mask )
+{
+	key_mask &= key_press;                          // read key(s)
+	key_press ^= key_mask;                          // clear key(s)
+	return key_mask;
+}
+
+uint16_t get_key_state( uint16_t key_mask )
+{
+	return key_mask & key_press;
 }
 
 #define MAX_ANIMATIONS 30
@@ -51,13 +80,14 @@ struct animation {
 	deinit_fun deinit_fp;
 	uint16_t duration;
 	uint16_t timing;
+	uint8_t idle;
 };
 
 static struct animation animations[MAX_ANIMATIONS];
 
 
 
-void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t, uint16_t count)
+void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t, uint16_t count, uint8_t idle)
 {
 
 	// this is for initialization, probably registerAnimation gets called bevore global variables are initialized
@@ -76,6 +106,7 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 	animations[animationcount].tick_fp = tick;
 	animations[animationcount].deinit_fp = deinit;
 	animations[animationcount].duration = count;
+	animations[animationcount].idle = idle;
 	animations[animationcount].timing = 10000 / t;
 
 	animationcount++;
@@ -134,6 +165,15 @@ int main(void)
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_12;       
 	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 	
+	//buttons
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_7;       
+	GPIO_Init(GPIOB, &GPIO_InitStructure);  
+	
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8;       
+	GPIO_Init(GPIOB, &GPIO_InitStructure);  
+	buttonsInitialized=1;
 
 	init_spi();
 	
@@ -170,19 +210,24 @@ int main(void)
 
 	int loopcount = 0;
 	
+	int mode = 0;
 
+
+	spi_send(0);
 	while(1)
 	{
 		loopcount++;
-		if((loopcount == 55)||(loopcount == 57))
+		if((loopcount == 50)||(loopcount == 150))
 		{
 			GPIOB->ODR           |=       1<<13;
+			GPIOB->ODR           &=       ~(1<<12);
 		}
-		if((loopcount == 56)||(loopcount == 58))
+		if((loopcount == 100)||(loopcount == 200))
 		{
 			GPIOB->ODR           &=       ~(1<<13);
+			GPIOB->ODR           |=       1<<12;
 
-			if(loopcount==58)
+			if(loopcount==200)
 				loopcount = 0;
 		}
 		
@@ -190,35 +235,51 @@ int main(void)
 
 		animations[current_animation].tick_fp();
 
-#ifdef lun1k
-#else
-		GPIOB->ODR           |=       1<<12;
-#endif
-
 		lcdFlush();
-
-#ifdef lun1k
-#else
-		GPIOB->ODR           &=       ~(1<<12);
-#endif
 
 		uint32_t duration = tick - start_tick;
 
 		if(animations[current_animation].timing - duration > 0)
 			Delay100us(animations[current_animation].timing - duration);
 
-		tick_count++;
+
+		if(mode != 2)
+			tick_count++;
+
+		if(get_key_press(KEY_B))
+		{
+			mode++;
+			if(mode == 3)
+				mode = 0;
+		}
 
 
-		if(tick_count == animations[current_animation].duration)
+		if(
+			(tick_count == animations[current_animation].duration) ||
+
+			get_key_press( KEY_A)
+		)
 		{
 			animations[current_animation].deinit_fp();
 
-			current_animation++;
-			if(current_animation == animationcount)
+			int last_animation = current_animation;
+
+			do
 			{
-				current_animation = 0;
+				current_animation++;
+				if(current_animation == animationcount)
+				{
+					current_animation = 0;
+				}
 			}
+			while(
+					(mode == 0)
+					&&
+					(animations[current_animation].idle == 0) 
+					&&
+					(tick_count == animations[last_animation].duration)
+				);
+
 			tick_count=0;
 	
 			fillRGB(0,0,0);

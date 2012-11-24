@@ -17,18 +17,20 @@ typedef void (*init_fun)(void);
 typedef void (*deinit_fun)(void);
 typedef uint8_t (*tick_fun)(void);
 
-void registerAnimation(init_fun init,tick_fun tick,deinit_fun deinit, uint16_t t, uint16_t duration);
+void registerAnimation(init_fun init,tick_fun tick,deinit_fun deinit, uint16_t t, uint16_t duration, uint8_t idle);
 
 void setLedX(uint8_t x, uint8_t r, uint8_t g, uint8_t b);
 void fillRGB(uint8_t r, uint8_t g, uint8_t b);
 
-#define LED_WIDTH 192
+#define KEY_A (1<<0)
+#define KEY_B (1<<1)
+
+#define LED_WIDTH 162
 #define LED_HEIGHT 1
 #define STRIPE
+#define FIRST_ON 22
+
 
 #define CONSTRUCTOR_ATTRIBUTES	__attribute__((constructor));
-
-#define CCM_ATTRIBUTES
-//#define CCM_ATTRIBUTES	__attribute__ ((section(".ccm")));
 
 #endif

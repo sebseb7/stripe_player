@@ -16,14 +16,17 @@ endif
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
-	../animations/gradient.c \
-	../animations/strobo_rgb.c \
-	../animations/strobo_rgb_fast.c \
-	../animations/white.c \
+	../animations/rainbow.c \
+	../animations/strobe.c \
+	../animations/rainbow_fast.c \
+	../animations/red_blue2.c \
+	../animations/red_blue.c \
+	../animations/bounce.c \
 	../animations/xor.c \
 	../animations/switch_rgb.c \
 	../animations/plasma.c \
 	../animations/plasma2.c \
+	libs/hsv2rgb.c \
 	libs/math.c \
 	libs/spi.c
 ASRC=core/startup_stm32f$(STM32F)xx.s
