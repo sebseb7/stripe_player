@@ -34,12 +34,12 @@ static uint8_t tick(void) {
 		for(int x=0;x<LED_WIDTH;x++)
 			setLedX(x,rgb.r*255,rgb.g*255,rgb.b*255);
 	}
-	else if (t > 20)
+	else if (t > 30)
 	{
 		for(int x=0;x<LED_WIDTH;x++)
 			setLedX(x,0,0,0);
 	}
-	if(t==320)
+	if(t==220)
 		t=0;
 
 
