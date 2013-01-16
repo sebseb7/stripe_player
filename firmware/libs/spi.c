@@ -10,27 +10,28 @@
 #include "spi.h"
 #include "main.h"
 
-#define SPIx_SD                         SPI2
-#define SPIx_SD_CLK                     RCC_APB1Periph_SPI2
-#define SPIx_SD_CLK_INIT                RCC_APB1PeriphClockCmd
-#define SPIx_SD_IRQn                    SPI2_IRQn
-#define SPIx_SD_IRQHANDLER              SPI2_IRQHandler
+#define SPIx_SD                         SPI1
+#define SPIx_SD_CLK                     RCC_APB2Periph_SPI1
+#define SPIx_SD_CLK_INIT                RCC_APB2PeriphClockCmd
+#define SPIx_SD_IRQn                    SPI1_IRQn
+#define SPIx_SD_IRQHANDLER              SPI1_IRQHandler
 
-#define SPIx_SD_SCK_PIN                 GPIO_Pin_10
-#define SPIx_SD_SCK_GPIO_PORT           GPIOB
-#define SPIx_SD_SCK_GPIO_CLK            RCC_AHB1Periph_GPIOB
-#define SPIx_SD_SCK_SOURCE              GPIO_PinSource10
-#define SPIx_SD_SCK_AF                  GPIO_AF_SPI2
+#define SPIx_SD_SCK_PIN                 GPIO_Pin_5
+#define SPIx_SD_SCK_GPIO_PORT           GPIOA
+#define SPIx_SD_SCK_GPIO_CLK            RCC_AHB1Periph_GPIOA
+#define SPIx_SD_SCK_SOURCE              GPIO_PinSource5
+#define SPIx_SD_SCK_AF                  GPIO_AF_SPI1
 
-#define SPIx_SD_MOSI_PIN                GPIO_Pin_15
-#define SPIx_SD_MOSI_GPIO_PORT          GPIOB
-#define SPIx_SD_MOSI_GPIO_CLK           RCC_AHB1Periph_GPIOB
-#define SPIx_SD_MOSI_SOURCE             GPIO_PinSource15
-#define SPIx_SD_MOSI_AF                 GPIO_AF_SPI2
+#define SPIx_SD_MOSI_PIN                GPIO_Pin_7
+#define SPIx_SD_MOSI_GPIO_PORT          GPIOA
+#define SPIx_SD_MOSI_GPIO_CLK           RCC_AHB1Periph_GPIOA
+#define SPIx_SD_MOSI_SOURCE             GPIO_PinSource7
+#define SPIx_SD_MOSI_AF                 GPIO_AF_SPI1
 
 
-#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_2
+#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_4
 //#define SPIx_SD_BAUDRATE_FAST  			SPI_BaudRatePrescaler_8
+
 
 
 /*#define SPI_SD                   SPI2
@@ -104,9 +105,9 @@ void init_spi(void)
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 	SPI_InitStructure.SPI_CRCPolynomial = 7;
 
-	SPI_Init(SPI2, &SPI_InitStructure);
-	SPI_CalculateCRC(SPI2, DISABLE);
-	SPI_Cmd(SPI2, ENABLE);
+	SPI_Init(SPI1, &SPI_InitStructure);
+	SPI_CalculateCRC(SPI1, DISABLE);
+	SPI_Cmd(SPI1, ENABLE);
 
 }
 
