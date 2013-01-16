@@ -13,7 +13,9 @@ static const uint8_t color_correction[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 static uint16_t key_state;
 static uint16_t key_press;
-uint32_t buttonsInitialized = 0;
+static uint32_t buttonsInitialized = 0;
+static int mode = 0;
+static int dim = 0;
 
 static __IO uint32_t TimingDelay;
 static __IO uint32_t tick;
@@ -40,8 +42,8 @@ void TimingDelay_Decrement(void)
 	}
 	if(buttonsInitialized)
 	{
-		uint16_t key_curr = ((GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_8)<<1)|
-							  GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_7));
+		uint16_t key_curr = ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2)<<1)|
+							  GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3));
 
 		i = key_state ^ ~key_curr;
 		ct0 = ~( ct0 & i );
@@ -131,16 +133,40 @@ void fillRGB(uint8_t red,uint8_t green,uint8_t blue)
 	}
 }
 
-void lcdFlush(void)
+static void lcdFlush(void)
 {
-	spi_send(0);
+		
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
-		spi_send (0x80 | color_correction[leds[x][1]] );
-		spi_send (0x80 | color_correction[leds[x][0]] );
-		spi_send (0x80 | color_correction[leds[x][2]] );
+		spi_send (0x80 | (color_correction[leds[x][1]]>>dim) );
+		spi_send (0x80 | (color_correction[leds[x][0]]>>dim) );
+		spi_send (0x80 | (color_correction[leds[x][2]]>>dim) );
 	}
 	spi_send(0);
+	
+
+	if(mode == 0)
+	{
+		spi_send (0x80 | 1);
+		spi_send (0x80 | 0);
+		spi_send (0x80 | 0);
+	}
+	if(mode == 1)
+	{
+		spi_send (0x80 | 0);
+		spi_send (0x80 | 1);
+		spi_send (0x80 | 0);
+	}
+	if(mode == 2)
+	{
+		spi_send (0x80 | 0);
+		spi_send (0x80 | 0);
+		spi_send (0x80 | 1);
+	}
+	
+	spi_send (0x80 | 0);
+	spi_send (0x80 | 0);
+	spi_send (0x80 | 0);
 }
 
 
@@ -154,6 +180,7 @@ int main(void)
 	SysTick_Config(RCC_Clocks.HCLK_Frequency / 10000);
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
@@ -168,11 +195,11 @@ int main(void)
 	//buttons
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_7;       
-	GPIO_Init(GPIOB, &GPIO_InitStructure);  
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2;       
+	GPIO_Init(GPIOA, &GPIO_InitStructure);  
 	
-	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_8;       
-	GPIO_Init(GPIOB, &GPIO_InitStructure);  
+	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_3;       
+	GPIO_Init(GPIOA, &GPIO_InitStructure);  
 	buttonsInitialized=1;
 
 	init_spi();
@@ -210,7 +237,6 @@ int main(void)
 
 	int loopcount = 0;
 	
-	int mode = 0;
 
 
 	spi_send(0);
@@ -248,9 +274,18 @@ int main(void)
 
 		if(get_key_press(KEY_B))
 		{
-			mode++;
-			if(mode == 3)
-				mode = 0;
+			if(get_key_state( KEY_A))
+			{
+				mode++;
+				if(mode == 3)
+					mode = 0;
+			}
+			else
+			{
+				dim++;
+				if(dim == 5)
+					dim = 0;
+			}
 		}
 
 
