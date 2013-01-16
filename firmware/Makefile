@@ -1,7 +1,7 @@
 PROJECT=template
 
 
-STM32F=2
+STM32F=4
 LSCRIPT=core/stm32f$(STM32F)xx_flash.ld
 
 OPTIMIZATION = -O2
@@ -16,10 +16,13 @@ endif
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
+	../animations/noise.c \
+	../animations/nobounce.c \
 	../animations/rainbow.c \
 	../animations/strobe.c \
 	../animations/rainbow_fast.c \
 	../animations/red_blue2.c \
+	../animations/plasma_bigsin.c \
 	../animations/red_blue.c \
 	../animations/bounce.c \
 	../animations/xor.c \
