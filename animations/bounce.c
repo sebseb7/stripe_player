@@ -6,12 +6,14 @@
 
 static uint16_t a = 0;
 
+static const uint8_t item[] = {250,250,250,240,200,150,50,1};
+
 static uint8_t tick(void) {
 
 	
-	float x0 = (float)sini(a*40)/(0xffff/LED_WIDTH);
-	float x1 = (float)sini(a*70)/(0xffff/LED_WIDTH);
-	float x2 = (float)sini(a*103)/(0xffff/LED_WIDTH);
+	float x0 = (float)sini(a*40)/(0xffff/(LED_WIDTH+20))-10;
+	float x1 = (float)sini(a*70)/(0xffff/(LED_WIDTH+20))-10;
+	float x2 = (float)sini(a*103)/(0xffff/(LED_WIDTH+20))-10;
 
 	for(int x = 0; x < LED_WIDTH; x++) 
 	{
@@ -24,17 +26,17 @@ static uint8_t tick(void) {
 		uint8_t diff1 = abs(x1-x);
 		uint8_t diff2 = abs(x2-x);
 
-		if(diff0 < 32)
+		if(diff0 < 8)
 		{
-			red = (32-diff0)*4;
+			red = item[diff0];
 		}
-		if(diff1 < 32)
+		if(diff1 < 8)
 		{
-			green = (32-diff1)*4;
+			green= item[diff1];
 		}
-		if(diff2 < 32)
+		if(diff2 < 8)
 		{
-			blue = (32-diff2)*4;
+			blue = item[diff2];
 		}
 
 		setLedX(
