@@ -45,7 +45,7 @@
   */ 
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct
+typedef struct __attribute__((__packed__))
 {
   uint32_t SYSCLK_Frequency; /*!<  SYSCLK clock frequency expressed in Hz */
   uint32_t HCLK_Frequency;   /*!<  HCLK clock frequency expressed in Hz */
