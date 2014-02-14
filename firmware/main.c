@@ -1,6 +1,7 @@
 #include "main.h"
-#include "libs/spi.h"
 #include "libs/math.h"
+
+#include "libs/spi.h"
 
 /*
  *	boot loader: http://www.st.com/stonline/stappl/st/com/TECHNICAL_RESOURCES/TECHNICAL_LITERATURE/APPLICATION_NOTE/CD00167594.pdf (page 31)
@@ -116,10 +117,10 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 
 uint8_t leds[LED_WIDTH][3];
 
-void setLedX(uint8_t x, uint8_t red,uint8_t green,uint8_t blue) {
+void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	if (x >= LED_WIDTH) return;
-	leds[x][0] = red;
-	leds[x][1] = green;
+	leds[x][0] = green;
+	leds[x][1] = red;
 	leds[x][2] = blue;
 }
 
@@ -127,15 +128,19 @@ void fillRGB(uint8_t red,uint8_t green,uint8_t blue)
 {
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
-		leds[x][0] = red;
-		leds[x][1] = green;
+		leds[x][0] = green;
+		leds[x][1] = red;
 		leds[x][2] = blue;
 	}
 }
 
 static void lcdFlush(void)
 {
-		
+#ifdef WS2812B
+
+
+#else
+
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
 		spi_send (0x80 | (color_correction[leds[x][1]]>>dim) );
@@ -167,8 +172,69 @@ static void lcdFlush(void)
 	spi_send (0x80 | 0);
 	spi_send (0x80 | 0);
 	spi_send (0x80 | 0);
+
+#endif
+
 }
 
+
+uint32_t itmode = 0;
+
+
+uint32_t led_nr = 0;
+uint32_t col_nr = 0;
+uint32_t bit_nr = 8;
+
+void TIM3_IRQHandler(void)
+{
+	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		
+		itmode++;
+#define XYZ LED_WIDTH*3*8
+		if(itmode < XYZ)
+		{
+			if((leds[led_nr][col_nr] & (1<<(bit_nr-1))) == (1<<(bit_nr-1)) )
+			{
+				TIM3->CCR1=67u;
+			}else
+			{
+				TIM3->CCR1=34u;
+			}
+		}
+		else if(itmode == XYZ)
+		{
+			TIM3->PSC=13u;
+			TIM3->CCR1=0u;
+		}
+		else if(itmode == (XYZ+3))
+		{
+			TIM3->CCR1=105u;
+		}
+		else if(itmode == (XYZ+16))
+		{
+			TIM3->PSC=0u;
+			TIM3->CCR1=34u;
+			itmode =0;
+			led_nr = 0;
+			col_nr = 0;
+			bit_nr = 8;
+		}
+
+		bit_nr--;
+		if(bit_nr == 0)
+		{
+			bit_nr=8;
+			col_nr++;
+			if(col_nr==3)
+			{
+				col_nr=0;
+				led_nr++;
+			}
+		}
+	}
+}
 
 int main(void)
 {
@@ -202,8 +268,66 @@ int main(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);  
 	buttonsInitialized=1;
 
+#ifdef WS2812B
+
+	{
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM3);
+
+	TIM_TimeBaseStructure.TIM_Period = 104u;
+	TIM_TimeBaseStructure.TIM_Prescaler = 0u;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0u;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+	TIM_OCInitStructure.TIM_Pulse = 0u;
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;
+
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+	TIM_ARRPreloadConfig(TIM3, ENABLE);
+
+	//0: 34 vs. 1:67
+
+	TIM3->CCR1 = 67u;
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	/* Enable the TIM3 gloabal Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+	TIM_Cmd(TIM3, ENABLE);
+
+	}
+
+#else
 	init_spi();
-	
+#endif	
 	
 	int current_animation = 0;
 	animations[current_animation].init_fp();
@@ -237,9 +361,15 @@ int main(void)
 
 	int loopcount = 0;
 	
+	fillRGB(0,0,0);
 
 
+#ifdef WS2812B
+
+#else
 	spi_send(0);
+#endif	
+
 	while(1)
 	{
 		loopcount++;
@@ -297,9 +427,9 @@ int main(void)
 		{
 			animations[current_animation].deinit_fp();
 
-			int last_animation = current_animation;
+//			int last_animation = current_animation;
 
-			do
+//			do
 			{
 				current_animation++;
 				if(current_animation == animationcount)
@@ -307,13 +437,13 @@ int main(void)
 					current_animation = 0;
 				}
 			}
-			while(
+/*			while(
 					(mode == 0)
 					&&
 					(animations[current_animation].idle == 0) 
 					&&
 					(tick_count == animations[last_animation].duration)
-				);
+				)*/;
 
 			tick_count=0;
 	
