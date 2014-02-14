@@ -29,7 +29,7 @@
 #define SPIx_SD_MOSI_AF                 GPIO_AF_SPI1
 
 
-#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_4
+#define SPIx_SD_BAUDRATE_SLOW  			SPI_BaudRatePrescaler_8
 //#define SPIx_SD_BAUDRATE_FAST  			SPI_BaudRatePrescaler_8
 
 
