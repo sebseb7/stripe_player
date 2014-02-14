@@ -9,7 +9,7 @@ static uint16_t a = 0;
 static uint8_t tick(void) {
 
 	
-	uint8_t x;
+	uint16_t x;
 
 	uint16_t sin1 = sini(a);
 		
