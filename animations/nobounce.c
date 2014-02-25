@@ -2,7 +2,7 @@
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
-#include "libs/math.h"
+#include "libs/math_emb.h"
 
 
 static float pos_r = 0.0f;

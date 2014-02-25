@@ -1,5 +1,5 @@
 #include "main.h"
-#include "libs/math.h"
+#include "libs/math_emb.h"
 
 #include "libs/spi.h"
 

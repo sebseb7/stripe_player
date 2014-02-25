@@ -5,7 +5,7 @@
 
 enum {
 	LED_WIDTH = 60*8,
-	ZOOM_X = 3,
+	ZOOM_X = 2,
 	ZOOM_Y = 15,
 	FIRST_ON = 22
 };

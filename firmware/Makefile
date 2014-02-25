@@ -30,7 +30,7 @@ SRC=$(wildcard  *.c) \
 	../animations/plasma.c \
 	../animations/plasma2.c \
 	libs/hsv2rgb.c \
-	libs/math.c \
+	libs/math_emb.c \
 	libs/spi.c
 ASRC=core/startup_stm32f$(STM32F)xx.s
 OBJECTS= $(SRC:.c=.o) $(ASRC:.s=.o)

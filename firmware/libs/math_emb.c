@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "math.h"
+#include "math_emb.h"
 #include "main.h"
 
 
