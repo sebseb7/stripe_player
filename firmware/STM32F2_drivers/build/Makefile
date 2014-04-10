@@ -4,7 +4,7 @@ CC = arm-none-eabi-gcc
 AR = arm-none-eabi-ar
 RANLIB = arm-none-eabi-ranlib
 
-CFLAGS = -Wall -O0 -mthumb
+CFLAGS = -Wall -O2 -mthumb
 #CFLAGS +=  -mfpu=fpv4-sp-d16 -mfloat-abi=softfp 
 CFLAGS += -mcpu=cortex-m3  -ffreestanding
 #CFLAGS += -mcpu=cortex-m4  -ffreestanding -nostdlib -Wl,--gc-sections -fsingle-precision-constant -funsigned-char -Wundef -Wsign-compare -Wunreachable-code -Wstrict-prototypes

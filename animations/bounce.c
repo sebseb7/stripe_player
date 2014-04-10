@@ -2,7 +2,7 @@
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
-#include "libs/math.h"
+#include "libs/math_emb.h"
 
 static uint16_t a = 0;
 
@@ -22,9 +22,9 @@ static uint8_t tick(void) {
 		uint8_t green = 0;
 		uint8_t blue = 0;
 
-		uint8_t diff0 = abs(x0-x);
-		uint8_t diff1 = abs(x1-x);
-		uint8_t diff2 = abs(x2-x);
+		uint16_t diff0 = abs(x0-x);
+		uint16_t diff1 = abs(x1-x);
+		uint16_t diff2 = abs(x2-x);
 
 		if(diff0 < 8)
 		{

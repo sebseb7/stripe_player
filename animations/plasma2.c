@@ -2,14 +2,14 @@
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
-#include "libs/math.h"
+#include "libs/math_emb.h"
 
 static uint16_t a = 0;
 
 static uint8_t tick(void) {
 
 	
-	uint8_t x;
+	uint16_t x;
 
 	uint16_t sin1 = sini(a);
 	float x0 = (float)sini(a*6)/256-64;

@@ -45,7 +45,7 @@ void Delay(uint16_t t)
 }
 
 int leds[LED_WIDTH][4];
-void setLedX(uint8_t x, uint8_t red,uint8_t green,uint8_t blue) {
+void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	if (x >= LED_WIDTH) return;
 	leds[x][0] = red;
 	leds[x][1] = green;
@@ -53,14 +53,14 @@ void setLedX(uint8_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	leds[x][3] = 1;
 }
 
-void invLedX(uint8_t x) {
+void invLedX(uint16_t x) {
 	if (x >= LED_WIDTH) return;
 	leds[x][0] = 255 - leds[x][0];
 	leds[x][1] = 255 - leds[x][1];
 	leds[x][2] = 255 - leds[x][2];
 	leds[x][3] = 1;
 }
-void getLedX(uint8_t x, uint8_t* red, uint8_t* green, uint8_t* blue) {
+void getLedX(uint16_t x, uint8_t* red, uint8_t* green, uint8_t* blue) {
 	if (x >= LED_WIDTH) return;
 	*red = leds[x][0];
 	*green = leds[x][1];

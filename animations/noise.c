@@ -2,7 +2,7 @@
 #include "main.h"
 #include <stdio.h>
 #include <math.h>
-#include "libs/math.h"
+#include "libs/math_emb.h"
 #include "libs/hsv2rgb.h"
 
 

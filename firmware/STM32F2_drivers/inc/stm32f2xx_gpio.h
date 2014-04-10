@@ -120,7 +120,7 @@ typedef enum
 /** 
   * @brief   GPIO Init structure definition  
   */ 
-typedef struct
+typedef struct __attribute__((__packed__))
 {
   uint32_t GPIO_Pin;              /*!< Specifies the GPIO pins to be configured.
                                        This parameter can be any value of @ref GPIO_pins_define */
