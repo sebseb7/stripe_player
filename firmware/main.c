@@ -115,7 +115,7 @@ void registerAnimation(init_fun init,tick_fun tick, deinit_fun deinit,uint16_t t
 	animationcount++;
 }
 
-uint8_t leds[LED_WIDTH][3];
+static uint8_t leds[LED_WIDTH][3];
 
 void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	if (x >= LED_WIDTH) return;
@@ -178,19 +178,18 @@ static void lcdFlush(void)
 }
 
 
-uint32_t itmode = 0;
+static uint32_t itmode = 0;
 
 
-uint32_t led_nr = 0;
-uint32_t col_nr = 0;
-uint32_t bit_nr = 8;
+static uint32_t led_nr = 0;
+static uint32_t col_nr = 0;
+static uint32_t bit_nr = 8;
 
 void TIM3_IRQHandler(void)
 {
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-		
 		itmode++;
 #define XYZ LED_WIDTH*3*8
 		if(itmode < XYZ)
@@ -203,23 +202,31 @@ void TIM3_IRQHandler(void)
 				TIM3->CCR1=34u;
 			}
 		}
-		else if(itmode == XYZ)
+		
+		if(itmode == XYZ)
 		{
 			TIM3->PSC=13u;
+			TIM3->CCR1=34u;
+		}
+		if(itmode == XYZ+1)
+		{
 			TIM3->CCR1=0u;
 		}
-		else if(itmode == (XYZ+3))
+		if(itmode == XYZ+10)
 		{
-			TIM3->CCR1=105u;
-		}
-		else if(itmode == (XYZ+16))
-		{
-			TIM3->PSC=0u;
-			TIM3->CCR1=34u;
 			itmode =0;
 			led_nr = 0;
 			col_nr = 0;
-			bit_nr = 8;
+			bit_nr = 7;
+			
+			TIM3->PSC=0u;
+			if((leds[0][0] & (1<<7)) == (1<<7) )
+			{
+				TIM3->CCR1=67u;
+			}else
+			{
+				TIM3->CCR1=34u;
+			}
 		}
 
 		bit_nr--;
