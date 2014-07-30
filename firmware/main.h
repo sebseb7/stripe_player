@@ -25,7 +25,10 @@ void fillRGB(uint8_t r, uint8_t g, uint8_t b);
 #define KEY_A (1<<0)
 #define KEY_B (1<<1)
 
-#define LED_WIDTH (60*8)
+//#define LED_WIDTH (150) // a roll of wide led spacing stripe
+//#define LED_WIDTH (20) // a roll of wide led spacing stripe
+//#define LED_WIDTH (60*8-6+150+150) // a roll of wide led spacing stripe
+#define LED_WIDTH (60*4-6) // a roll of wide led spacing stripe
 #define LED_HEIGHT 1
 #define STRIPE
 #define FIRST_ON 22

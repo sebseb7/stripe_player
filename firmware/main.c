@@ -15,8 +15,8 @@ static const uint8_t color_correction[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 static uint16_t key_state;
 static uint16_t key_press;
 static uint32_t buttonsInitialized = 0;
-static int mode = 0;
-static int dim = 0;
+//static int mode = 0;
+//static int dim = 0;
 
 static __IO uint32_t TimingDelay;
 static __IO uint32_t tick;
@@ -119,27 +119,45 @@ static uint8_t leds[LED_WIDTH][3];
 
 void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	if (x >= LED_WIDTH) return;
-	leds[x][0] = green;
-	leds[x][1] = red;
-	leds[x][2] = blue;
+
+
+	/*
+	 * if(x > 474)
+	{
+		uint16_t overhead = x-474;
+		overhead = overhead>>1;
+
+		x = 474+overhead;
+	}
+	*/
+
+	leds[x][0] = color_correction[green];
+	leds[x][1] = color_correction[red];
+	leds[x][2] = color_correction[blue];
+
+	if(leds[x][0] > 60)
+		leds[x][0]=60;
+	if(leds[x][1] > 60)
+		leds[x][1]=60;
+	if(leds[x][2] > 60)
+		leds[x][2]=60;
 }
 
 void fillRGB(uint8_t red,uint8_t green,uint8_t blue) 
 {
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
-		leds[x][0] = green;
-		leds[x][1] = red;
-		leds[x][2] = blue;
+		leds[x][0] = color_correction[green];
+		leds[x][1] = color_correction[red];
+		leds[x][2] = color_correction[blue];
 	}
 }
 
+#ifndef WS2812B
 static void lcdFlush(void)
 {
-#ifdef WS2812B
 
 
-#else
 
 	for(int x= 0;x < LED_WIDTH;x++)
 	{
@@ -173,9 +191,9 @@ static void lcdFlush(void)
 	spi_send (0x80 | 0);
 	spi_send (0x80 | 0);
 
-#endif
 
 }
+#endif
 
 
 static uint32_t itmode = 0;
@@ -185,15 +203,23 @@ static uint32_t led_nr = 0;
 static uint32_t col_nr = 0;
 static uint32_t bit_nr = 8;
 
+
+//toggle a pin to check length of interrupt and optimize it (use bitbanding for led access and interrupt flags)
+//even more sophisticated: use DMA to update CCR1
+//
 void TIM3_IRQHandler(void)
 {
+//	if(((TIM3->SR & TIM_IT_Update) == (uint16_t)RESET) ||  ((TIM3->DIER & TIM_IT_Update) == (uint16_t)RESET))
+
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
 	{
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		//TIM3->SR = (uint16_t)~TIM_IT_Update;
 		itmode++;
-#define XYZ LED_WIDTH*3*8
+#define XYZ (LED_WIDTH*3*8)-150
 		if(itmode < XYZ)
 		{
+		
 			if((leds[led_nr][col_nr] & (1<<(bit_nr-1))) == (1<<(bit_nr-1)) )
 			{
 				TIM3->CCR1=67u;
@@ -212,13 +238,14 @@ void TIM3_IRQHandler(void)
 		{
 			TIM3->CCR1=0u;
 		}
-		if(itmode == XYZ+10)
+		if(itmode == XYZ+2)
 		{
 			itmode =0;
 			led_nr = 0;
 			col_nr = 0;
 			bit_nr = 7;
-			
+				
+
 			TIM3->PSC=0u;
 			if((leds[0][0] & (1<<7)) == (1<<7) )
 			{
@@ -253,7 +280,6 @@ int main(void)
 	SysTick_Config(RCC_Clocks.HCLK_Frequency / 10000);
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
@@ -266,6 +292,7 @@ int main(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);  
 	
 	//buttons
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2;       
@@ -275,101 +302,67 @@ int main(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);  
 	buttonsInitialized=1;
 
+
 #ifdef WS2812B
 
 	{
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-	TIM_OCInitTypeDef  TIM_OCInitStructure;
-	GPIO_InitTypeDef GPIO_InitStructure;
+		TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+		TIM_OCInitTypeDef  TIM_OCInitStructure;
+		GPIO_InitTypeDef GPIO_InitStructure;
 
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+		RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
 
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+		GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM3);
+		GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM3);
 
-	TIM_TimeBaseStructure.TIM_Period = 104u;
-	TIM_TimeBaseStructure.TIM_Prescaler = 0u;
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0u;
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+		TIM_TimeBaseStructure.TIM_Period = 104u;
+		TIM_TimeBaseStructure.TIM_Prescaler = 0u;
+		TIM_TimeBaseStructure.TIM_ClockDivision = 0u;
+		TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+		TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
 
 
-	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-	TIM_OCInitStructure.TIM_Pulse = 0u;
-	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;
+		TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+		TIM_OCInitStructure.TIM_Pulse = 0u;
+		TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+		TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+		TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;
 
-	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+		TIM_OC1Init(TIM3, &TIM_OCInitStructure);
+		TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
+		TIM_ARRPreloadConfig(TIM3, ENABLE);
 
-	//0: 34 vs. 1:67
+		//0: 34 vs. 1:67
 
-	TIM3->CCR1 = 67u;
+		TIM3->CCR1 = 67u;
 
-	NVIC_InitTypeDef NVIC_InitStructure;
-	/* Enable the TIM3 gloabal Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+		NVIC_InitTypeDef NVIC_InitStructure;
+		/* Enable the TIM3 gloabal Interrupt */
+		NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);
 
-	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
-	TIM_Cmd(TIM3, ENABLE);
+		TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
+		TIM_Cmd(TIM3, ENABLE);
 
 	}
 
 #else
 	init_spi();
 #endif	
-	
-	int current_animation = 0;
-	animations[current_animation].init_fp();
-	int tick_count = 0;
-	
-	
-/*	while(1)
-	{
-		spi_send(0);
-		for(int x= 0;x < 194;x++)
-		{
-			spi_send (0x80 | 0xff );
-			spi_send (0x80 | 0xff );
-			spi_send (0x80 | 0xff );
-		}
-		spi_send(0);
-		Delay(200);
-		spi_send(0);
-		for(int x= 0;x < 194;x++)
-		{
-			spi_send (0x80 | 0x00 );
-			spi_send (0x80 | 0x00 );
-			spi_send (0x80 | 0x00 );
-		}
-		spi_send(0);
-		Delay(200);
-	}
-*/
-	
-	
-
-	int loopcount = 0;
-	
-	fillRGB(0,0,0);
-
 
 #ifdef WS2812B
 
@@ -377,6 +370,13 @@ int main(void)
 	spi_send(0);
 #endif	
 
+	int current_animation = 0;
+	animations[current_animation].init_fp();
+	int tick_count = 0;
+	
+	fillRGB(0,0,0);
+
+	int loopcount = 0;
 	while(1)
 	{
 		loopcount++;
@@ -393,67 +393,66 @@ int main(void)
 			if(loopcount==200)
 				loopcount = 0;
 		}
-		
+
 		uint32_t start_tick = tick;
 
 		animations[current_animation].tick_fp();
 
-		lcdFlush();
+		//lcdFlush();
 
 		uint32_t duration = tick - start_tick;
 
 		if(animations[current_animation].timing - duration > 0)
 			Delay100us(animations[current_animation].timing - duration);
 
+		tick_count++;
 
-		if(mode != 2)
-			tick_count++;
+	/*
+	   if(mode != 2)
+	   tick_count++;
 
-		if(get_key_press(KEY_B))
+	   if(get_key_press(KEY_B))
+	   {
+	   if(get_key_state( KEY_A))
+	   {
+	   mode++;
+	   if(mode == 3)
+	   mode = 0;
+	   }
+	   else
+	   {
+	   dim++;
+	   if(dim == 5)
+	   dim = 0;
+	   }
+	   }
+	*/
+
+		if( (tick_count == animations[current_animation].duration) || get_key_press( KEY_A) )
 		{
-			if(get_key_state( KEY_A))
+	   		animations[current_animation].deinit_fp();
+
+	//			int last_animation = current_animation;
+
+	//			do
+			current_animation++;
+			if(current_animation == animationcount)
 			{
-				mode++;
-				if(mode == 3)
-					mode = 0;
+				current_animation = 0;
 			}
-			else
-			{
-				dim++;
-				if(dim == 5)
-					dim = 0;
-			}
-		}
 
 
-		if(
-			(tick_count == animations[current_animation].duration) ||
+	/*			while(
+				(mode == 0)
+				&&
+				(animations[current_animation].idle == 0) 
+				&&
+				(tick_count == animations[last_animation].duration)
+				);*/
 
-			get_key_press( KEY_A)
-		)
-		{
-			animations[current_animation].deinit_fp();
-
-//			int last_animation = current_animation;
-
-//			do
-			{
-				current_animation++;
-				if(current_animation == animationcount)
-				{
-					current_animation = 0;
-				}
-			}
-/*			while(
-					(mode == 0)
-					&&
-					(animations[current_animation].idle == 0) 
-					&&
-					(tick_count == animations[last_animation].duration)
-				)*/;
-
+				
 			tick_count=0;
-	
+
 			fillRGB(0,0,0);
 
 			animations[current_animation].init_fp();

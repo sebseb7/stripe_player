@@ -16,19 +16,19 @@ endif
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
-	../animations/noise.c \
-	../animations/nobounce.c \
-	../animations/rainbow.c \
-	../animations/strobe.c \
-	../animations/rainbow_fast.c \
-	../animations/red_blue2.c \
-	../animations/plasma_bigsin.c \
-	../animations/red_blue.c \
-	../animations/bounce.c \
-	../animations/xor.c \
-	../animations/switch_rgb.c \
+	../animations/white.c \
 	../animations/plasma.c \
+	../animations/red_blue.c \
+	../animations/switch_rgb.c \
 	../animations/plasma2.c \
+	../animations/rainbow_fast.c \
+	../animations/xor.c \
+	../animations/plasma_bigsin.c \
+	../animations/rainbow.c \
+	../animations/red_blue2.c \
+	../animations/plasma_red.c \
+	../animations/bounce_altCol.c \
+	../animations/strobe.c \
 	libs/hsv2rgb.c \
 	libs/math_emb.c \
 	libs/spi.c

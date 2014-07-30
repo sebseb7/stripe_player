@@ -5,17 +5,17 @@
 #include "libs/math_emb.h"
 
 static uint8_t tick(void) {
-        static uint8_t xo = 0;
-        xo++;
-        static uint8_t y = 0;
-        if (!(xo & 0x3))
-                y++;
+	static uint8_t xo = 0;
+	xo++;
+	static uint8_t y = 0;
+	if (!(xo & 0x3))
+		y++;
 
-        for(int x = 0; x < LED_WIDTH; x++)
-        {
-                uint8_t xr = x + xo;
-                setLedX(x, xr ^ y, !xr ^ y, xr ^ !y);
-        }
+	for(int x = 0; x < LED_WIDTH; x++)
+	{
+		uint8_t xr = x + xo;
+		setLedX(x, xr ^ y, !xr ^ y, xr ^ !y);
+	}
 
 	return 0;
 }
