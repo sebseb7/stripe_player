@@ -6,6 +6,8 @@ LSCRIPT=core/stm32f$(STM32F)xx_flash.ld
 
 OPTIMIZATION = -O2
 
+WITHUSB=1
+
 ifeq ($(STM32F),2)
 CORTEXM=3
 else
@@ -39,9 +41,24 @@ endif
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
 	../animations/sector.c \
+	../animations/sector2.c \
+	../animations/sector3.c \
 	libs/hsv2rgb.c \
 	libs/math_emb.c \
 	libs/spi.c
+
+ifeq ($(WITHUSB),1)
+SRC +=$(wildcard usb/*.c) STM32_USB_Device_Library/Core/src/usbd_core.c \
+	STM32_USB_Device_Library/Core/src/usbd_req.c \
+	STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
+	STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.c \
+	STM32_USB_OTG_Driver/src/usb_core.c \
+	STM32_USB_OTG_Driver/src/usb_dcd.c \
+	STM32_USB_OTG_Driver/src/usb_dcd_int.c \
+	libs/usb_serial.c 
+endif
+
+
 ASRC=core/startup_stm32f$(STM32F)xx.s
 OBJECTS= $(SRC:.c=.o) $(ASRC:.s=.o)
 LSTFILES= $(SRC:.c=.lst)
@@ -52,6 +69,14 @@ GCFLAGS = -DSTM32F=$(STM32F) -ffreestanding -std=gnu99 -mcpu=cortex-m$(CORTEXM) 
 ifeq ($(CORTEXM),4)
 GCFLAGS+= -mfpu=fpv4-sp-d16 -mfloat-abi=hard -falign-functions=16 
 endif
+
+ifeq ($(WITHUSB),1)
+GCFLAGS+=-DUSE_USB_OTG_FS=1 -Iusb
+GCFLAGS+=-ISTM32_USB_Device_Library/Class/cdc/inc
+GCFLAGS+=-ISTM32_USB_OTG_Driver/inc
+GCFLAGS+=-ISTM32_USB_Device_Library/Core/inc
+endif
+
 # Warnings
 GCFLAGS += -Wno-strict-aliasing -Wstrict-prototypes -Wundef -Wall -Wextra -Wunreachable-code  
 # Optimizazions

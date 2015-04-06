@@ -21,6 +21,8 @@ void registerAnimation(init_fun init,tick_fun tick,deinit_fun deinit, uint16_t t
 
 void setLedX(uint16_t x, uint8_t r, uint8_t g, uint8_t b);
 void fillRGB(uint8_t r, uint8_t g, uint8_t b);
+
+void process_usb_byte(uint8_t);
 #define FIRST_ON 22
 
 #define KEY_A (1<<0)

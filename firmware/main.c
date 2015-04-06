@@ -3,6 +3,7 @@
 
 
 #include "libs/spi.h"
+#include "libs/usb_serial.h"
 
 /*
  *	boot loader: http://www.st.com/stonline/stappl/st/com/TECHNICAL_RESOURCES/TECHNICAL_LITERATURE/APPLICATION_NOTE/CD00167594.pdf (page 31)
@@ -272,6 +273,15 @@ void TIM3_IRQHandler(void)
 	}
 }
 
+int next_animation = 0;
+void process_usb_byte(uint8_t rx)
+{
+	if(rx == 0x6a)
+	{
+		next_animation = 1;
+	}
+}
+
 int main(void)
 {
 	RCC_ClocksTypeDef RCC_Clocks;
@@ -303,7 +313,12 @@ int main(void)
 	GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_3;       
 	GPIO_Init(GPIOA, &GPIO_InitStructure);  
 	buttonsInitialized=1;
+		
+		
 
+#ifdef USE_USB_OTG_FS
+	usb_serial_init();
+#endif
 
 #ifdef WS2812B
 
@@ -431,8 +446,13 @@ int main(void)
 	*/
 
 		//if( (tick_count == animations[current_animation].duration) || get_key_press( KEY_A) )
-		if(tick_count == animations[current_animation].duration )
+		//if(tick_count == animations[current_animation].duration )
+		if((tick_count == animations[current_animation].duration )||(next_animation == 1))
 		{
+			next_animation = 0;
+#ifdef USE_USB_OTG_FS
+			usb_printf("switch\n");
+#endif
 	   		animations[current_animation].deinit_fp();
 
 	//			int last_animation = current_animation;
