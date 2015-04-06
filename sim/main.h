@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 enum {
-	LED_WIDTH = 60*8,
-	ZOOM_X = 2,
-	ZOOM_Y = 15,
+	LED_WIDTH = (32*3),
+	ZOOM_X = 12,
+	ZOOM_Y = 50,
 	FIRST_ON = 22
 };
 

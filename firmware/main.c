@@ -13,14 +13,14 @@
 
 static const uint8_t color_correction[256] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,10,10,10,10,10,11,11,11,11,12,12,12,12,13,13,13,13,14,14,14,14,15,15,15,16,16,16,17,17,17,18,18,18,19,19,20,20,20,21,21,22,22,23,23,23,24,24,25,25,26,26,27,27,28,29,29,30,30,31,32,32,33,33,34,35,35,36,37,38,38,39,40,41,41,42,43,44,45,46,47,48,48,49,50,51,52,53,54,56,57,58,59,60,61,62,64,65,66,67,69,70,71,73,74,76,77,79,80,82,83,85,87,88,90,92,93,95,97,99,101,103,105,107,109,111,113,115,118,120,122,125,127};
 
-static uint16_t key_state;
-static uint16_t key_press;
+static uint16_t key_state = 0;
+static uint16_t key_press = 0;
 static uint32_t buttonsInitialized = 0;
 //static int mode = 0;
 //static int dim = 0;
 
-static __IO uint32_t TimingDelay;
-static __IO uint32_t tick;
+static __IO uint32_t TimingDelay = 0;
+static __IO uint32_t tick = 0;
 void Delay(__IO uint32_t nTime)
 {
 	TimingDelay = nTime*10;
@@ -36,7 +36,7 @@ static void Delay100us(__IO uint32_t nTime)
 
 void TimingDelay_Decrement(void)
 {
-	static uint16_t ct0, ct1;
+	static uint16_t ct0=0, ct1=0;
 	uint16_t i;
 	if (TimingDelay != 0x00)
 	{ 
@@ -217,7 +217,7 @@ void TIM3_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 		//TIM3->SR = (uint16_t)~TIM_IT_Update;
 		itmode++;
-#define XYZ (LED_WIDTH*3*8)-150
+#define XYZ (LED_WIDTH*3*8)
 		if(itmode < XYZ)
 		{
 		
@@ -429,7 +429,8 @@ int main(void)
 	   }
 	*/
 
-		if( (tick_count == animations[current_animation].duration) || get_key_press( KEY_A) )
+		//if( (tick_count == animations[current_animation].duration) || get_key_press( KEY_A) )
+		if(tick_count == animations[current_animation].duration )
 		{
 	   		animations[current_animation].deinit_fp();
 

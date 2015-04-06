@@ -21,6 +21,7 @@ void registerAnimation(init_fun init,tick_fun tick,deinit_fun deinit, uint16_t t
 
 void setLedX(uint16_t x, uint8_t r, uint8_t g, uint8_t b);
 void fillRGB(uint8_t r, uint8_t g, uint8_t b);
+#define FIRST_ON 22
 
 #define KEY_A (1<<0)
 #define KEY_B (1<<1)
@@ -28,12 +29,9 @@ void fillRGB(uint8_t r, uint8_t g, uint8_t b);
 //#define LED_WIDTH (150) // a roll of wide led spacing stripe
 //#define LED_WIDTH (20) // a roll of wide led spacing stripe
 //#define LED_WIDTH (60*8-6+150+150) // a roll of wide led spacing stripe
-#define LED_WIDTH (60*4-6) // a roll of wide led spacing stripe
-#define LED_HEIGHT 1
-#define STRIPE
-#define FIRST_ON 22
-
-//enable this for WS2812B stripe (default is LPD8806)
+//#define LED_WIDTH (60*4-6) // a roll of wide led spacing stripe
+//#define LED_WIDTH ((5*32)-10)
+#define LED_WIDTH ((3*32))
 #define WS2812B
 
 #define CONSTRUCTOR_ATTRIBUTES	__attribute__((constructor));

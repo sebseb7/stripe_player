@@ -13,22 +13,32 @@ CORTEXM=4
 endif
 
 #########################################################################
+#	../animations/white.c \
+
+#	../animations/fire4.c \
+#	../animations/fire.c \
+#	../animations/fire2.c \
+#	../animations/fire3.c \
+#	../animations/plasma_red.c \
+	
+#	../animations/plasma.c \
+#	../animations/red_blue.c \
+#	../animations/switch_rgb.c \
+#	../animations/plasma2.c \
+#	../animations/bounce.c \
+#	../animations/rainbow_fast.c \
+#	../animations/xor.c \
+#	../animations/nobounce.c \
+#	../animations/plasma_bigsin.c \
+#	../animations/plasma_red.c \
+#	../animations/rainbow.c \
+#	../animations/red_blue2.c \
+#	../animations/bounce_altCol.c \
+#	../animations/strobe.c \
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
-	../animations/white.c \
-	../animations/plasma.c \
-	../animations/red_blue.c \
-	../animations/switch_rgb.c \
-	../animations/plasma2.c \
-	../animations/rainbow_fast.c \
-	../animations/xor.c \
-	../animations/plasma_bigsin.c \
-	../animations/rainbow.c \
-	../animations/red_blue2.c \
-	../animations/plasma_red.c \
-	../animations/bounce_altCol.c \
-	../animations/strobe.c \
+	../animations/sector.c \
 	libs/hsv2rgb.c \
 	libs/math_emb.c \
 	libs/spi.c

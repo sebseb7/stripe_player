@@ -21,7 +21,7 @@ static uint8_t tick(void) {
 		for(x=0;x<LED_WIDTH;x++)
 			setLedX(x,0,0,255);
 	
-	a+=1;
+	a+=5;
 	if(a==100)
 	{
 		a=0;
@@ -45,7 +45,7 @@ static void deinit(void)
 
 static void constructor(void) CONSTRUCTOR_ATTRIBUTES
 void constructor(void) {
-	registerAnimation(init,tick,deinit, 35, 1600,1);
+	registerAnimation(init,tick,deinit, 35, 1300,1);
 }
 
 

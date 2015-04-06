@@ -28,7 +28,7 @@ static uint8_t tick(void) {
 			float dist = pythagorasf(x0-x,y0-y);
 			float dist2 = pythagorasf(y1-x,x1-y);
 
-			uint16_t h = sini(sin1+x*2)+ y_part + sini(dist*120) + sini(dist2*100);
+			uint16_t h = sini(sin1+x*200)+ y_part + sini(dist*120) + sini(dist2*100);
 			
 			setLedX(
 				x,
@@ -56,7 +56,7 @@ static void deinit(void)
 
 static void constructor(void) CONSTRUCTOR_ATTRIBUTES
 void constructor(void) {
-	registerAnimation(init,tick,deinit, 35, 1000,1);
+	registerAnimation(init,tick,deinit, 24, 1000,1);
 }
 
 
