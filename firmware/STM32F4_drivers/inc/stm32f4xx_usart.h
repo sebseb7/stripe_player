@@ -2,14 +2,14 @@
   ******************************************************************************
   * @file    stm32f4xx_usart.h
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    05-March-2012
+  * @version V1.1.0
+  * @date    11-January-2013
   * @brief   This file contains all the functions prototypes for the USART 
-  *          firmware library.
+  *          firmware library.    
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
-  ******************************************************************************
+  ******************************************************************************  
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -51,7 +51,7 @@
   * @brief  USART Init Structure definition  
   */ 
   
-typedef struct
+typedef struct __attribute__((__packed__))
 {
   uint32_t USART_BaudRate;            /*!< This member configures the USART communication baud rate.
                                            The baud rate is computed using the following formula:
@@ -84,7 +84,7 @@ typedef struct
   * @brief  USART Clock Init Structure definition  
   */ 
   
-typedef struct
+typedef struct __attribute__((__packed__))
 {
 
   uint16_t USART_Clock;   /*!< Specifies whether the USART clock is enabled or disabled.
@@ -112,7 +112,9 @@ typedef struct
                                      ((PERIPH) == USART3) || \
                                      ((PERIPH) == UART4)  || \
                                      ((PERIPH) == UART5)  || \
-                                     ((PERIPH) == USART6))
+                                     ((PERIPH) == USART6) || \
+                                     ((PERIPH) == UART7)  || \
+                                     ((PERIPH) == UART8))
 
 #define IS_USART_1236_PERIPH(PERIPH) (((PERIPH) == USART1) || \
                                       ((PERIPH) == USART2) || \

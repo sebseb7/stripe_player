@@ -34,9 +34,11 @@ caddr_t _sbrk(int incr) {
 
 }
 
-void _exit(void) {
+void _exit(void) 
+{
 	while(1) {
 		// Loop until reset
 	}
 }
+
 

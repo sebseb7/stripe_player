@@ -2,14 +2,14 @@
   ******************************************************************************
   * @file    stm32f4xx_tim.h
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    05-March-2012
+  * @version V1.1.0
+  * @date    11-January-2013
   * @brief   This file contains all the functions prototypes for the TIM firmware 
   *          library.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@
   * @note   This structure is used with all TIMx except for TIM6 and TIM7.  
   */
 
-typedef struct  __attribute__((__packed__))
+typedef struct __attribute__((__packed__))
 {
   uint16_t TIM_Prescaler;         /*!< Specifies the prescaler value used to divide the TIM clock.
                                        This parameter can be a number between 0x0000 and 0xFFFF */
@@ -81,7 +81,7 @@ typedef struct  __attribute__((__packed__))
   * @brief  TIM Output Compare Init structure definition  
   */
 
-typedef struct  __attribute__((__packed__))
+typedef struct __attribute__((__packed__))
 {
   uint16_t TIM_OCMode;        /*!< Specifies the TIM mode.
                                    This parameter can be a value of @ref TIM_Output_Compare_and_PWM_modes */
@@ -116,7 +116,7 @@ typedef struct  __attribute__((__packed__))
   * @brief  TIM Input Capture Init structure definition  
   */
 
-typedef struct  __attribute__((__packed__))
+typedef struct __attribute__((__packed__))
 {
 
   uint16_t TIM_Channel;      /*!< Specifies the TIM channel.
@@ -140,7 +140,7 @@ typedef struct  __attribute__((__packed__))
   * @note   This structure is used only with TIM1 and TIM8.    
   */
 
-typedef struct  __attribute__((__packed__))
+typedef struct __attribute__((__packed__))
 {
 
   uint16_t TIM_OSSRState;        /*!< Specifies the Off-State selection used in Run mode.

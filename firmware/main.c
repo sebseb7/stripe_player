@@ -136,12 +136,13 @@ void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	leds[x][1] = color_correction[red];
 	leds[x][2] = color_correction[blue];
 
-	if(leds[x][0] > 60)
+/*	if(leds[x][0] > 60)
 		leds[x][0]=60;
 	if(leds[x][1] > 60)
 		leds[x][1]=60;
 	if(leds[x][2] > 60)
 		leds[x][2]=60;
+*/
 }
 
 void fillRGB(uint8_t red,uint8_t green,uint8_t blue) 

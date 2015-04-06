@@ -29,7 +29,7 @@ static uint8_t tick(void) {
 	{
 		curr_sec = rand() % NUM_SECTORS;
 		sectors_h[curr_sec]= rand() % 360;
-		sectors_v[curr_sec] = 40;
+		sectors_v[curr_sec] = 60;
 	}
 
 		
@@ -43,10 +43,10 @@ static uint8_t tick(void) {
 
 		hsv.h = sectors_h[i]/360.0f;
 		hsv.s = 1;
-		hsv.v = sectors_v[i]/40.0f;
+		hsv.v = sectors_v[i]/60.0f;
 		
 		
-		if((t % 4) > 1)
+		if((t % 3) > 0)
 			hsv.v=0;
 
 		hsv2rgb( &hsv, &rgb );

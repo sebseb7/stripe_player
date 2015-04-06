@@ -2,14 +2,14 @@
   ******************************************************************************
   * @file    stm32f4xx_adc.h
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    05-March-2012
+  * @version V1.1.0
+  * @date    11-January-2013
   * @brief   This file contains all the functions prototypes for the ADC firmware 
   *          library.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2013 STMicroelectronics</center></h2>
   *
   * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@
 /** 
   * @brief   ADC Init structure definition  
   */ 
-typedef struct
+typedef struct __attribute__((__packed__))
 {
   uint32_t ADC_Resolution;                /*!< Configures the ADC resolution dual mode. 
                                                This parameter can be a value of @ref ADC_resolution */                                   
@@ -81,7 +81,7 @@ typedef struct
 /** 
   * @brief   ADC Common Init structure definition  
   */ 
-typedef struct 
+typedef struct __attribute__((__packed__))
 {
   uint32_t ADC_Mode;                      /*!< Configures the ADC to operate in 
                                                independent or multi mode. 
