@@ -123,27 +123,11 @@ void setLedX(uint16_t x, uint8_t red,uint8_t green,uint8_t blue) {
 	if (x >= LED_WIDTH) return;
 
 
-	/*
-	 * if(x > 474)
-	{
-		uint16_t overhead = x-474;
-		overhead = overhead>>1;
-
-		x = 474+overhead;
-	}
-	*/
 
 	leds[x][0] = color_correction[green];
 	leds[x][1] = color_correction[red];
 	leds[x][2] = color_correction[blue];
 
-/*	if(leds[x][0] > 60)
-		leds[x][0]=60;
-	if(leds[x][1] > 60)
-		leds[x][1]=60;
-	if(leds[x][2] > 60)
-		leds[x][2]=60;
-*/
 }
 
 void fillRGB(uint8_t red,uint8_t green,uint8_t blue) 
@@ -212,6 +196,7 @@ static uint32_t bit_nr = 8;
 //
 void TIM3_IRQHandler(void)
 {
+<<<<<<< Updated upstream
 //	if(((TIM3->SR & TIM_IT_Update) == (uint16_t)RESET) ||  ((TIM3->DIER & TIM_IT_Update) == (uint16_t)RESET))
 
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
@@ -220,6 +205,16 @@ void TIM3_IRQHandler(void)
 		//TIM3->SR = (uint16_t)~TIM_IT_Update;
 		itmode++;
 #define XYZ (LED_WIDTH*3*8)
+=======
+	if(((TIM3->SR & TIM_IT_Update) == (uint16_t)RESET) ||  ((TIM3->DIER & TIM_IT_Update) == (uint16_t)RESET))
+
+//	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
+	{
+		//TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		TIM3->SR = (uint16_t)~TIM_IT_Update;
+		itmode++;
+#define XYZ (LED_WIDTH*3*8)-150
+>>>>>>> Stashed changes
 		if(itmode < XYZ)
 		{
 		
@@ -280,6 +275,8 @@ void process_usb_byte(uint8_t rx)
 	{
 		next_animation = 1;
 	}
+
+	//USB_OTG_DisableGlobalInt(&USB_OTG_dev);
 }
 
 int main(void)
@@ -380,6 +377,44 @@ int main(void)
 #else
 	init_spi();
 #endif	
+<<<<<<< Updated upstream
+=======
+	
+	int current_animation = 0;
+	animations[current_animation].init_fp();
+	//int tick_count = 0;
+	
+	
+/*	while(1)
+	{
+		spi_send(0);
+		for(int x= 0;x < 194;x++)
+		{
+			spi_send (0x80 | 0xff );
+			spi_send (0x80 | 0xff );
+			spi_send (0x80 | 0xff );
+		}
+		spi_send(0);
+		Delay(200);
+		spi_send(0);
+		for(int x= 0;x < 194;x++)
+		{
+			spi_send (0x80 | 0x00 );
+			spi_send (0x80 | 0x00 );
+			spi_send (0x80 | 0x00 );
+		}
+		spi_send(0);
+		Delay(200);
+	}
+*/
+	
+	
+
+	int loopcount = 0;
+	
+	fillRGB(0,0,0);
+
+>>>>>>> Stashed changes
 
 #ifdef WS2812B
 
@@ -455,7 +490,13 @@ int main(void)
 #endif
 	   		animations[current_animation].deinit_fp();
 
+<<<<<<< Updated upstream
 	//			int last_animation = current_animation;
+=======
+/*
+		if(mode != 2)
+			tick_count++;
+>>>>>>> Stashed changes
 
 	//			do
 			current_animation++;
@@ -465,6 +506,7 @@ int main(void)
 			}
 
 
+<<<<<<< Updated upstream
 	/*			while(
 				(mode == 0)
 				&&
@@ -476,12 +518,41 @@ int main(void)
 				
 			tick_count=0;
 
+=======
+			get_key_press( KEY_A)
+		)
+		{
+			animations[current_animation].deinit_fp();
+
+//			int last_animation = current_animation;
+
+//			do
+			{
+				current_animation++;
+				if(current_animation == animationcount)
+				{
+					current_animation = 0;
+				}
+			}
+
+			*/
+/*			while(
+					(mode == 0)
+					&&
+					(animations[current_animation].idle == 0) 
+					&&
+					(tick_count == animations[last_animation].duration)
+				)*/;
+
+/*			tick_count=0;
+	
+>>>>>>> Stashed changes
 			fillRGB(0,0,0);
 
 			animations[current_animation].init_fp();
 
 
-		}
+		}*/
 	}
 
 }

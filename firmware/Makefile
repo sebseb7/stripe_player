@@ -15,14 +15,6 @@ CORTEXM=4
 endif
 
 #########################################################################
-#	../animations/white.c \
-
-#	../animations/fire4.c \
-#	../animations/fire.c \
-#	../animations/fire2.c \
-#	../animations/fire3.c \
-#	../animations/plasma_red.c \
-	
 #	../animations/plasma.c \
 #	../animations/red_blue.c \
 #	../animations/switch_rgb.c \

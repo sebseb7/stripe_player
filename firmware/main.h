@@ -30,10 +30,9 @@ void process_usb_byte(uint8_t);
 
 //#define LED_WIDTH (150) // a roll of wide led spacing stripe
 //#define LED_WIDTH (20) // a roll of wide led spacing stripe
-//#define LED_WIDTH (60*8-6+150+150) // a roll of wide led spacing stripe
-//#define LED_WIDTH (60*4-6) // a roll of wide led spacing stripe
-//#define LED_WIDTH ((5*32)-10)
 #define LED_WIDTH ((3*32))
+
+//enable this for WS2812B stripe (default is LPD8806)
 #define WS2812B
 
 #define CONSTRUCTOR_ATTRIBUTES	__attribute__((constructor));
