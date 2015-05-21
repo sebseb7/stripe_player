@@ -29,11 +29,12 @@ endif
 #	../animations/red_blue2.c \
 #	../animations/strobe.c \
 
+#	../animations/fire4.c \
+
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
 	../animations/sector.c \
 	../animations/bounce_altCol.c \
-	../animations/fire4.c \
 	../animations/sector2.c \
 	../animations/strobe.c \
 	../animations/sector3.c \

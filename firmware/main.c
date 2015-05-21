@@ -196,7 +196,6 @@ static uint32_t bit_nr = 8;
 //
 void TIM3_IRQHandler(void)
 {
-<<<<<<< Updated upstream
 //	if(((TIM3->SR & TIM_IT_Update) == (uint16_t)RESET) ||  ((TIM3->DIER & TIM_IT_Update) == (uint16_t)RESET))
 
 	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
@@ -205,16 +204,6 @@ void TIM3_IRQHandler(void)
 		//TIM3->SR = (uint16_t)~TIM_IT_Update;
 		itmode++;
 #define XYZ (LED_WIDTH*3*8)
-=======
-	if(((TIM3->SR & TIM_IT_Update) == (uint16_t)RESET) ||  ((TIM3->DIER & TIM_IT_Update) == (uint16_t)RESET))
-
-//	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-	{
-		//TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
-		TIM3->SR = (uint16_t)~TIM_IT_Update;
-		itmode++;
-#define XYZ (LED_WIDTH*3*8)-150
->>>>>>> Stashed changes
 		if(itmode < XYZ)
 		{
 		
@@ -377,50 +366,13 @@ int main(void)
 #else
 	init_spi();
 #endif	
-<<<<<<< Updated upstream
-=======
 	
-	int current_animation = 0;
-	animations[current_animation].init_fp();
-	//int tick_count = 0;
-	
-	
-/*	while(1)
-	{
-		spi_send(0);
-		for(int x= 0;x < 194;x++)
-		{
-			spi_send (0x80 | 0xff );
-			spi_send (0x80 | 0xff );
-			spi_send (0x80 | 0xff );
-		}
-		spi_send(0);
-		Delay(200);
-		spi_send(0);
-		for(int x= 0;x < 194;x++)
-		{
-			spi_send (0x80 | 0x00 );
-			spi_send (0x80 | 0x00 );
-			spi_send (0x80 | 0x00 );
-		}
-		spi_send(0);
-		Delay(200);
-	}
-*/
-	
-	
-
-	int loopcount = 0;
-	
-	fillRGB(0,0,0);
-
->>>>>>> Stashed changes
-
 #ifdef WS2812B
 
 #else
 	spi_send(0);
 #endif	
+
 
 	int current_animation = 0;
 	animations[current_animation].init_fp();
@@ -488,71 +440,23 @@ int main(void)
 #ifdef USE_USB_OTG_FS
 			usb_printf("switch\n");
 #endif
-	   		animations[current_animation].deinit_fp();
+			animations[current_animation].deinit_fp();
 
-<<<<<<< Updated upstream
-	//			int last_animation = current_animation;
-=======
-/*
-		if(mode != 2)
-			tick_count++;
->>>>>>> Stashed changes
+			tick_count=0;
 
-	//			do
+			//get_key_press( KEY_A)
+				
 			current_animation++;
 			if(current_animation == animationcount)
 			{
 				current_animation = 0;
 			}
 
-
-<<<<<<< Updated upstream
-	/*			while(
-				(mode == 0)
-				&&
-				(animations[current_animation].idle == 0) 
-				&&
-				(tick_count == animations[last_animation].duration)
-				);*/
-
-				
-			tick_count=0;
-
-=======
-			get_key_press( KEY_A)
-		)
-		{
-			animations[current_animation].deinit_fp();
-
-//			int last_animation = current_animation;
-
-//			do
-			{
-				current_animation++;
-				if(current_animation == animationcount)
-				{
-					current_animation = 0;
-				}
-			}
-
-			*/
-/*			while(
-					(mode == 0)
-					&&
-					(animations[current_animation].idle == 0) 
-					&&
-					(tick_count == animations[last_animation].duration)
-				)*/;
-
-/*			tick_count=0;
-	
->>>>>>> Stashed changes
 			fillRGB(0,0,0);
 
 			animations[current_animation].init_fp();
 
-
-		}*/
+		}
 	}
 
 }
