@@ -22,9 +22,9 @@ static uint8_t tick(void) {
 		uint8_t green = 0;
 		uint8_t blue = 0;
 
-		uint16_t diff0 = abs(pos_r-x);
-		uint16_t diff1 = abs(pos_b-x);
-		uint16_t diff2 = abs(pos_g-x);
+		uint16_t diff0 = fabsf(pos_r-x);
+		uint16_t diff1 = fabsf(pos_b-x);
+		uint16_t diff2 = fabsf(pos_g-x);
 
 		if(diff0 < 8)
 		{

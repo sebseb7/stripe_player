@@ -27,14 +27,18 @@ endif
 #	../animations/plasma_red.c \
 #	../animations/rainbow.c \
 #	../animations/red_blue2.c \
-#	../animations/bounce_altCol.c \
 #	../animations/strobe.c \
 
 SRC=$(wildcard  *.c) \
 	core/syscalls.c core/stm32fxxx_it.c core/system_stm32f$(STM32F)xx.c \
 	../animations/sector.c \
+	../animations/bounce_altCol.c \
+	../animations/fire4.c \
 	../animations/sector2.c \
+	../animations/strobe.c \
 	../animations/sector3.c \
+	../animations/nobounce.c \
+	../animations/red_blue2.c \
 	libs/hsv2rgb.c \
 	libs/math_emb.c \
 	libs/spi.c
