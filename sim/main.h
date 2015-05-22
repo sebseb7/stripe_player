@@ -26,5 +26,6 @@ void setLedX(uint16_t x, uint8_t r,uint8_t g,uint8_t b);
 void invLedX(uint16_t x);
 void Delay(uint16_t t);
 void getLedX(uint16_t x, uint8_t* red, uint8_t* green, uint8_t* blue);
+void fillRGB(uint8_t r,uint8_t g, uint8_t b);
 #endif
 
